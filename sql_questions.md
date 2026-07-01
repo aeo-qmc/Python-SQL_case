@@ -75,29 +75,3 @@ GROUP BY operator
 HAVING COUNT(*) >= 3
 ORDER BY avg_fee DESC;
 ```
-
-### Create statement
-
-```sql
-CREATE TABLE contracts (
-    contract_id INTEGER PRIMARY KEY,
-    site_id INTEGER NOT NULL,
-    operator TEXT NOT NULL,
-    base_fee NUMERIC NOT NULL,
-    status TEXT NOT NULL CHECK (status IN ('active', 'churned'))
-);
-```
-
-```sql
-INSERT INTO contracts (contract_id, site_id, operator, base_fee, status) VALUES
-(1, 101, 'Claro', 8200, 'active'),
-(2, 101, 'TIM',   4500, 'active'),
-(3, 102, 'Claro', 6100, 'active'),
-(4, 102, 'Vivo',  5300, 'active'),
-(5, 103, 'TIM',   3800, 'active'),
-(6, 103, 'TIM',   4200, 'active'),
-(7, 103, 'TIM',   5900, 'active'),
-(8, 104, 'Vivo',  9100, 'active'),
-(9, 104, 'Claro', 2100, 'churned'),
-(10, 105, 'Claro', 7400, 'active');
-```
