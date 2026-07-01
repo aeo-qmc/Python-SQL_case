@@ -333,6 +333,8 @@ def two_sum(nums, target):
 
 ## Database setup
 
+Visualize the tables in [SQLite Online](https://sqliteonline.com/).
+
 ### Exercise 01
 
 ```sql
