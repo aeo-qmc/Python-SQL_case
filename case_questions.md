@@ -246,61 +246,7 @@ if __name__ == "__main__":
 
 ---
 
-## 05 · Latest reading per site `SQL`
-
-### Schema
-
-```
-readings(
-  reading_id  INT,
-  site_id     INT,
-  measured_at TIMESTAMP,
-  signal_dbm  NUMERIC    -- signal strength in dBm
-)
-```
-
-### Sample data
-
-| reading_id | site_id | measured_at      | signal_dbm |
-|------------|---------|------------------|------------|
-| 1          | 101     | 2024-06-01 08:00 | -72        |
-| 2          | 101     | 2024-06-01 14:00 | -68        |
-| 3          | 101     | 2024-06-02 09:00 | -75        |
-| 4          | 102     | 2024-06-01 10:00 | -80        |
-| 5          | 102     | 2024-06-02 11:00 | -77        |
-| 6          | 103     | 2024-06-01 07:00 | -65        |
-
-### Question
-
-Both queries below return the most recent signal reading for each site. **Which would you prefer in production, and why?**
-
-#### Option A
-
-```sql
-SELECT reading_id, site_id, measured_at, signal_dbm
-FROM readings r
-WHERE measured_at = (
-    SELECT MAX(measured_at)
-    FROM readings
-    WHERE site_id = r.site_id
-);
-```
-
-#### Option B
-
-```sql
-SELECT reading_id, site_id, measured_at, signal_dbm
-FROM (
-    SELECT *,
-           ROW_NUMBER() OVER (PARTITION BY site_id ORDER BY measured_at DESC) AS rn
-    FROM readings
-) ranked
-WHERE rn = 1;
-```
-
----
-
-## 06 · Two Sum `Python`
+## 05 · Two Sum `Python`
 
 **Context:** given a list of integers and a target value, this function returns the indices of the two numbers that add up to the target. It is correct.
 
@@ -402,23 +348,3 @@ INSERT INTO incidents VALUES
 (5, 103, 'high');
 ```
 
-### Exercise 05
-
-```sql
-CREATE TABLE readings (
-    reading_id  INTEGER PRIMARY KEY,
-    site_id     INTEGER NOT NULL,
-    measured_at TIMESTAMP NOT NULL,
-    signal_dbm  NUMERIC NOT NULL
-);
-```
-
-```sql
-INSERT INTO readings VALUES
-(1, 101, '2024-06-01 08:00', -72),
-(2, 101, '2024-06-01 14:00', -68),
-(3, 101, '2024-06-02 09:00', -75),
-(4, 102, '2024-06-01 10:00', -80),
-(5, 102, '2024-06-02 11:00', -77),
-(6, 103, '2024-06-01 07:00', -65);
-```
