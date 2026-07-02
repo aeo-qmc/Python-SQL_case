@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questions</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --surface-alt: #f2f1ee;
+    --border: #e0deda;
+    --border-strong: #c8c5bf;
+    --text: #1a1917;
+    --text-muted: #6b6860;
+    --text-faint: #9e9b95;
+    --accent: #1a5c9e;
+    --accent-bg: #e8f0f9;
+    --accent-border: #b8cfe8;
+    --green: #1a6e3c;
+    --green-bg: #e6f4ec;
+    --green-border: #a8d5bc;
+    --amber: #7a4d0a;
+    --amber-bg: #fdf0db;
+    --amber-border: #f0c97a;
+    --purple: #4a2d8a;
+    --purple-bg: #eeebfb;
+    --purple-border: #c5baf0;
+    --mono: 'Courier New', Courier, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.65;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .page { max-width: 860px; margin: 0 auto; }
+
+  .header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1.5px solid var(--border-strong);
+  }
+
+  .header-meta {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 0.5rem;
+  }
+
+  .header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .header p {
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 640px;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .toc-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 0.75rem;
+  }
+
+  .toc-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .toc-list a {
+    text-decoration: none;
+    color: var(--accent);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toc-list a:hover { text-decoration: underline; }
+  .toc-num { font-size: 11px; font-weight: 600; color: var(--text-faint); min-width: 22px; }
+  .toc-tag { font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 10px; margin-left: auto; }
+
+  .exercise {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .ex-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .ex-num {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-faint);
+    padding-top: 2px;
+    min-width: 24px;
+  }
+
+  .ex-header-text { flex: 1; }
+  .ex-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .ex-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .tag { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 10px; border: 1px solid currentColor; }
+  .tag-py { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+  .tag-sql { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+  .tag-algo { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+  .tag-ds { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+  .tag-ml { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+  .tag-llm { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+
+  .ex-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 0.5rem;
+  }
+
+  .prompt-box {
+    background: var(--surface-alt);
+    border-left: 3px solid var(--border-strong);
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.25rem;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .schema {
+    background: #1e1e1e;
+    color: #9cdcfe;
+    border-radius: 8px;
+    padding: 1.1rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .col-type { color: #4ec9b0; }
+  .col-note { color: #6a9955; }
+
+  .tbl-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .region-data {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .region-map svg {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    min-width: 260px;
+    margin: 0;
+    border-radius: 8px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.55rem 0.7rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.5rem 0.7rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  .table-note { padding: 0.6rem 0.7rem; font-size: 12px; color: var(--text-muted); background: var(--surface-alt); }
+  .unlabeled { color: var(--text-faint) !important; font-style: italic; }
+  .label-indoor { color: var(--accent); font-weight: 600; }
+  .label-outdoor { color: var(--green); font-weight: 600; }
+
+  .questions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .q-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .q-num {
+    color: var(--text-faint);
+    font-weight: 700;
+    min-width: 18px;
+    flex-shrink: 0;
+  }
+
+  .q-text { flex: 1; }
+  .q-text p + p { margin-top: 0.65rem; }
+  .q-text code, .prompt-box code { font-family: var(--mono); font-size: 0.95em; }
+  .q-note { color: var(--text-muted); font-size: 13px; }
+
+  .sms-scene { display: flex; justify-content: flex-start; }
+  .sms-phone {
+    width: min(100%, 360px);
+    background: #f5f5f5;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 1rem;
+  }
+  .sms-header { font-size: 12px; color: var(--text-muted); margin-bottom: 0.75rem; display: flex; justify-content: space-between; gap: 1rem; }
+  .bubble-wrap { display: flex; justify-content: flex-start; }
+  .bubble {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 14px 14px 14px 4px;
+    padding: 0.75rem 0.9rem;
+    max-width: 300px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .cpf-highlight { font-weight: 700; color: var(--accent); }
+  .sms-time { font-size: 11px; color: var(--text-faint); margin-top: 0.5rem; }
+
+  .cm-wrap {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .cm-table { width: auto; min-width: 340px; }
+  .row-label { background: var(--surface-alt); color: var(--text-muted); font-weight: 600; }
+  .cm-tn, .cm-tp { background: var(--green-bg); color: var(--green); font-weight: 700; text-align: center; }
+  .cm-fp, .cm-fn { background: #fdeaea; color: #8b1f1f; font-weight: 700; text-align: center; }
+  .cm-stats { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; }
+  .cm-stat-row { display: flex; gap: 8px; align-items: center; }
+  .cm-stat-label { font-size: 11px; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; min-width: 80px; }
+  .cm-stat-val { font-weight: 600; color: var(--text); font-size: 13.5px; }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    color: var(--text-faint);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 1.25rem 0.8rem 2.5rem; }
+    .ex-header { padding: 1rem; }
+    .ex-body { padding: 1rem; }
+    .toc-list a { align-items: flex-start; }
+    .toc-tag { display: none; }
+    .region-data { grid-template-columns: 1fr; }
+    .region-map svg { max-width: 100%; min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-meta">AEO — Assets Efficiency Office &nbsp;·&nbsp; Technical Interview</div>
+    <h1>AEO — Assets Efficiency Office · Technical Interview</h1>
+    <p>All questions can be answered verbally.</p>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Exercises</div>
+    <ul class="toc-list">
+      <li><a href="#ex1"><span class="toc-num">01</span> Indoor-outdoor classification <span class="toc-tag tag-ml">ML</span></a></li>
+      <li><a href="#ex2"><span class="toc-num">02</span> Regional signal quality summary <span class="toc-tag tag-py">Data reasoning</span></a></li>
+      <li><a href="#ex3"><span class="toc-num">03</span> Network expansion candidate selection <span class="toc-tag tag-ds">Data modeling</span></a></li>
+      <li><a href="#ex4"><span class="toc-num">04</span> LLM integration in production <span class="toc-tag tag-llm">GenAI</span></a></li>
+      <li><a href="#ex5"><span class="toc-num">05</span> Reading a confusion matrix <span class="toc-tag tag-ml">Classical ML</span></a></li>
+    </ul>
+  </div>
+
+  <div class="exercise" id="ex1">
+    <div class="ex-header">
+      <div class="ex-num">01</div>
+      <div class="ex-header-text"><div class="ex-title">Indoor-outdoor classification</div></div>
+      <div class="ex-tags"><span class="tag tag-ml">ML</span></div>
+    </div>
+    <div class="ex-body">
+      <div>
+        <div class="section-label">Scenario</div>
+        <div class="prompt-box">You have a dataset of mobile signal samples. Each sample has features like luminosity of the device screen, battery level, and transmission frequency. Some samples are labelled <code>indoor</code> or <code>outdoor</code> - but some are not.</div>
+      </div>
+
+      <div>
+        <div class="section-label">Sample data</div>
+        <div class="tbl-wrap">
+          <table class="data-tbl">
+            <thead><tr><th>sample_id</th><th>luminosity_lux</th><th>battery_pct</th><th>frequency_mhz</th><th>label</th></tr></thead>
+            <tbody>
+              <tr><td>s001</td><td>12</td><td>81</td><td>1800</td><td class="label-indoor">indoor</td></tr>
+              <tr><td>s002</td><td>4820</td><td>55</td><td>2100</td><td class="label-outdoor">outdoor</td></tr>
+              <tr><td>s003</td><td>310</td><td>92</td><td>700</td><td class="label-outdoor">outdoor</td></tr>
+              <tr><td>s004</td><td>8</td><td>44</td><td>1800</td><td class="label-indoor">indoor</td></tr>
+              <tr><td>s005</td><td>2140</td><td>78</td><td>2600</td><td class="label-outdoor">outdoor</td></tr>
+              <tr><td>s006</td><td>95</td><td>63</td><td>900</td><td class="unlabeled">-</td></tr>
+              <tr><td>s007</td><td>670</td><td>29</td><td>2100</td><td class="unlabeled">-</td></tr>
+              <tr><td>s008</td><td>18</td><td>88</td><td>1800</td><td class="unlabeled">-</td></tr>
+              <tr><td>s009</td><td>3900</td><td>51</td><td>700</td><td class="unlabeled">-</td></tr>
+              <tr><td>s010</td><td>44</td><td>72</td><td>2600</td><td class="unlabeled">-</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Question</div>
+        <div class="questions">
+          <div class="q-row">
+            <span class="q-text">In order to classify all samples as indoor or outdoor, what type of approach would you use?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercise" id="ex2">
+    <div class="ex-header">
+      <div class="ex-num">02</div>
+      <div class="ex-header-text"><div class="ex-title">Regional signal quality summary</div></div>
+      <div class="ex-tags"><span class="tag tag-py">Data</span></div>
+    </div>
+    <div class="ex-body">
+      <div>
+        <div class="section-label">Context</div>
+        <div class="prompt-box">We collect mobile signal measurements aggregated by geographic hexagons (H3 cells). Each hex has a sample count and an average RSRP value - a signal quality metric in dBm, where higher (less negative) is better.</div>
+      </div>
+
+      <div class="region-data">
+        <div class="region-map">
+          <div class="section-label">Region</div>
+          <svg viewBox="0 0 412 342" role="img">
+            <title>H3 hexagonal region illustration</title>
+            <desc>A grid of pointy-top hexagons. Nine hexagons labelled h1 through h9 are highlighted in blue and enclosed by a region boundary.</desc>
+            <polygon points="118.4,92.0 118.4,128.0 87.2,146.0 56.0,128.0 56.0,92.0 87.2,74.0" fill="none" stroke="#c8c5bf" stroke-width="0.8"/>
+            <polygon points="87.2,146.0 87.2,182.0 56.0,200.0 24.8,182.0 24.8,146.0 56.0,128.0" fill="none" stroke="#c8c5bf" stroke-width="0.8"/>
+            <polygon points="118.4,200.0 118.4,236.0 87.2,254.0 56.0,236.0 56.0,200.0 87.2,182.0" fill="none" stroke="#c8c5bf" stroke-width="0.8"/>
+            <polygon points="149.5,38.0 149.5,74.0 118.4,92.0 87.2,74.0 87.2,38.0 118.4,20.0" fill="none" stroke="#c8c5bf" stroke-width="0.8"/>
+            <polygon points="180.7,92.0 180.7,128.0 149.5,146.0 118.4,128.0 118.4,92.0 149.5,74.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="149.5" y="110.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-family="monospace" fill="#0C447C">h1</text>
+            <polygon points="149.5,146.0 149.5,182.0 118.4,200.0 87.2,182.0 87.2,146.0 118.4,128.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="118.4" y="164.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-family="monospace" fill="#0C447C">h4</text>
+            <polygon points="180.7,200.0 180.7,236.0 149.5,254.0 118.4,236.0 118.4,200.0 149.5,182.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="149.5" y="218.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-family="monospace" fill="#0C447C">h7</text>
+            <polygon points="149.5,254.0 149.5,290.0 118.4,308.0 87.2,290.0 87.2,254.0 118.4,236.0" fill="none" stroke="#c8c5bf" stroke-width="0.8"/>
+            <polygon points="211.9,38.0 211.9,74.0 180.7,92.0 149.5,74.0 149.5,38.0 180.7,20.0" fill="none" stroke="#c8c5bf" stroke-width="0.8"/>
+            <polygon points="243.1,92.0 243.1,128.0 211.9,146.0 180.7,128.0 180.7,92.0 211.9,74.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="211.9" y="110.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-family="monospace" fill="#0C447C">h2</text>
+            <polygon points="211.9,146.0 211.9,182.0 180.7,200.0 149.5,182.0 149.5,146.0 180.7,128.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="180.7" y="164.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-family="monospace" fill="#0C447C">h5</text>
+            <polygon points="243.1,200.0 243.1,236.0 211.9,254.0 180.7,236.0 180.7,200.0 211.9,182.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="211.9" y="218.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-family="monospace" fill="#0C447C">h8</text>
+            <polygon points="211.9,254.0 211.9,290.0 180.7,308.0 149.5,290.0 149.5,254.0 180.7,236.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="180.7" y="272.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-family="monospace" fill="#0C447C">h9</text>
+            <polygon points="305.4,92.0 305.4,128.0 274.2,146.0 243.1,128.0 243.1,92.0 274.2,74.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="274.2" y="110.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-family="monospace" fill="#0C447C">h3</text>
+            <polygon points="274.2,146.0 274.2,182.0 243.1,200.0 211.9,182.0 211.9,146.0 243.1,128.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="243.1" y="164.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-family="monospace" fill="#0C447C">h6</text>
+            <path d="M 211.9,254.0 L 211.9,290.0 L 180.7,308.0 L 149.5,290.0 L 149.5,254.0 L 118.4,236.0 L 118.4,200.0 L 87.2,182.0 L 87.2,146.0 L 118.4,128.0 L 118.4,92.0 L 149.5,74.0 L 180.7,92.0 L 211.9,74.0 L 243.1,92.0 L 274.2,74.0 L 305.4,92.0 L 305.4,128.0 L 274.2,146.0 L 274.2,182.0 L 243.1,200.0 L 243.1,236.0 Z" fill="none" stroke="#185FA5" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <line x1="310.2" y1="110.0" x2="334" y2="110" stroke="#378ADD" stroke-width="1" stroke-dasharray="4 3"/>
+            <circle cx="310.2" cy="110.0" r="2.5" fill="#378ADD"/>
+            <text x="338" y="114" font-size="13" fill="#185FA5" font-family="sans-serif" font-weight="500">Region</text>
+          </svg>
+        </div>
+
+        <div>
+          <div class="section-label">Data</div>
+          <div class="tbl-wrap">
+            <table class="data-tbl">
+              <thead><tr><th>h3_id</th><th>operator</th><th>samples</th><th>avg_rsrp</th></tr></thead>
+              <tbody>
+                <tr><td>h1</td><td>Claro</td><td>120</td><td>-88.5</td></tr>
+                <tr><td>h2</td><td>Claro</td><td>340</td><td>-95.1</td></tr>
+                <tr><td>h3</td><td>Claro</td><td>55</td><td>-102.0</td></tr>
+                <tr><td>h4</td><td>TIM</td><td>200</td><td>-91.0</td></tr>
+                <tr><td>h5</td><td>TIM</td><td>0</td><td>-</td></tr>
+                <tr><td>h6</td><td>TIM</td><td>410</td><td>-87.3</td></tr>
+                <tr><td>h7</td><td>Vivo</td><td>88</td><td>-93.4</td></tr>
+                <tr><td>h8</td><td>Vivo</td><td>175</td><td>-89.9</td></tr>
+                <tr><td>h9</td><td>Vivo</td><td>0</td><td>-</td></tr>
+              </tbody>
+            </table>
+            <div class="table-note">avg_rsrp in dBm. Higher (less negative) = better signal. Rows with 0 samples have no measurement.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Question</div>
+        <div class="questions">
+          <div class="q-row">
+            <span class="q-text">How would you compute the average RSRP for this region, broken down by operator?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercise" id="ex3">
+    <div class="ex-header">
+      <div class="ex-num">03</div>
+      <div class="ex-header-text"><div class="ex-title">Network expansion candidate selection</div></div>
+      <div class="ex-tags"><span class="tag tag-ds">Data modeling</span><span class="tag tag-ds">Data science</span></div>
+    </div>
+    <div class="ex-body">
+      <div>
+        <div class="section-label">Context</div>
+        <div class="prompt-box">A telecom company wants to expand its network coverage and needs to decide which municipalities to prioritize for new tower deployment. You have been given a dataset with population and current number of towers per municipality.</div>
+      </div>
+
+      <div>
+        <div class="section-label">Data</div>
+        <div class="tbl-wrap">
+          <table class="data-tbl">
+            <thead><tr><th>municipality</th><th>population</th><th>num_towers</th></tr></thead>
+            <tbody>
+              <tr><td>Campinas</td><td>1,200,000</td><td>48</td></tr>
+              <tr><td>Ribeirão Preto</td><td>720,000</td><td>22</td></tr>
+              <tr><td>Franca</td><td>360,000</td><td>8</td></tr>
+              <tr><td>Batatais</td><td>62,000</td><td>1</td></tr>
+              <tr><td>Orlândia</td><td>41,000</td><td>1</td></tr>
+              <tr><td>Sales de Oliveira</td><td>11,000</td><td>0</td></tr>
+              <tr><td>Igarapava</td><td>28,000</td><td>1</td></tr>
+              <tr><td>Guará</td><td>21,000</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Question</div>
+        <div class="questions">
+          <div class="q-row">
+            <span class="q-text">What cities would you say are the best candidates for expansion?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercise" id="ex4">
+    <div class="ex-header">
+      <div class="ex-num">04</div>
+      <div class="ex-header-text"><div class="ex-title">LLM integration in production</div></div>
+      <div class="ex-tags"><span class="tag tag-llm">GenAI</span></div>
+    </div>
+    <div class="ex-body">
+      <div>
+        <div class="section-label">Scenario</div>
+        <div class="prompt-box">You need to build a system that reads a text message and extracts the sender's CPF from it. You decide to use an LLM API to do the extraction.</div>
+      </div>
+
+      <div>
+        <div class="section-label">Example message</div>
+        <div class="sms-scene">
+          <div class="sms-phone">
+            <div class="sms-header"><strong>Proprietário</strong><span>hoje 14:32</span></div>
+            <div class="bubble-wrap">
+              <div class="bubble">Boa tarde, meu nome é Carlos Silva. Meu CPF é <span class="cpf-highlight">318.429.657-90</span> e gostaria de saber sobre o reajuste do contrato.</div>
+            </div>
+            <div class="sms-time">Entregue</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Questions</div>
+        <div class="questions">
+          <div class="q-row"><span class="q-num">1.</span><span class="q-text">Tell me about what your prompt would look like for this.</span></div>
+          <div class="q-row"><span class="q-num">2.</span><span class="q-text">How would you verify that your prompt works reliably?</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercise" id="ex5">
+    <div class="ex-header">
+      <div class="ex-num">05</div>
+      <div class="ex-header-text"><div class="ex-title">Reading a confusion matrix</div></div>
+      <div class="ex-tags"><span class="tag tag-ml">Classical ML</span></div>
+    </div>
+    <div class="ex-body">
+      <div>
+        <div class="section-label">Scenario</div>
+        <div class="prompt-box">A colleague trained a classifier to detect indoor samples using the same dataset. Here are the results on the test set.</div>
+      </div>
+
+      <div>
+        <div class="section-label">Results</div>
+        <div class="cm-wrap">
+          <div>
+            <table class="cm-table">
+              <thead>
+                <tr><th></th><th></th><th colspan="2">Predicted</th></tr>
+                <tr><th></th><th></th><th>Outdoor</th><th>Indoor</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="row-label" rowspan="2">Actual</td><td class="row-label">Outdoor</td><td class="cm-tn">965</td><td class="cm-fp">5</td></tr>
+                <tr><td class="row-label">Indoor</td><td class="cm-fn">25</td><td class="cm-tp">5</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cm-stats">
+            <div class="cm-stat-row"><span class="cm-stat-label">Accuracy</span><span class="cm-stat-val">97.0%</span></div>
+            <div class="cm-stat-row"><span class="cm-stat-label">Total</span><span class="cm-stat-val">1,000 samples</span></div>
+            <div class="cm-stat-row"><span class="cm-stat-label">Outdoor</span><span class="cm-stat-val">970 samples</span></div>
+            <div class="cm-stat-row"><span class="cm-stat-label">Indoor</span><span class="cm-stat-val">30 samples</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Question</div>
+        <div class="questions">
+          <div class="q-row"><span class="q-text">The model has 97.0% accuracy. Is that a good result?</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>AEO — Assets Efficiency Office · QMC Telecom</span>
+    <span>Candidate copy — v1</span>
+  </div>
+</div>
+</body>
+</html>
